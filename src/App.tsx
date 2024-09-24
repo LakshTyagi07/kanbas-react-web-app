@@ -1,16 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import Lab1 from './Labs/Lab1';
-import Lab2 from './Labs/Lab2';
-import './App.css';
-
-function App() {
+import Labs from "./Labs";
+import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
+import Kanbas from "./Kanbas";
+export default function App() {
   return (
-    <div className="App">
-      <Lab1/>
-      <Lab2/>
-    </div>
+    <HashRouter>
+      <div>
+        <Routes>
+          <Route path="/" element={<Navigate to="Labs" />} />
+          <Route path="/Labs/*" element={<Labs />} />
+          <Route path="/Kanbas/*" element={<Kanbas />} />
+        </Routes>
+      </div>
+    </HashRouter>
   );
 }
-
-export default App;
