@@ -62,10 +62,47 @@ export default function Dashboard() {
             </div>
           </Link>
         </div>
-        
+        <div className="wd-dashboard-course">
+          <Link
+            className="wd-dashboard-course-link"
+            to="/Kanbas/Courses/1234/Home"
+          >
+            <img src="images/Design.png" width={200} />
+            <div>
+              <h5>ARTG1000</h5>
+              <p className="wd-dashboard-course-title">Design Fundamentals</p>
+              <button> Go </button>
+            </div>
+          </Link>
+        </div>
+        <div className="wd-dashboard-course">
+          <Link
+            className="wd-dashboard-course-link"
+            to="/Kanbas/Courses/1234/Home"
+          >
+            <img src="images/Design System.png" width={200} />
+            <div>
+              <h5>ARTG3000</h5>
+              <p className="wd-dashboard-course-title">Design Systems</p>
+              <button> Go </button>
+            </div>
+          </Link>
+        </div>        
       </div>
-      
-    </div>
+      <div className="wd-dashboard-course">
+          <Link
+            className="wd-dashboard-course-link"
+            to="/Kanbas/Courses/1234/Home"
+          >
+            <img src="images/Writing.png" width={200} />
+            <div>
+              <h5>ENG3000</h5>
+              <p className="wd-dashboard-course-title">Advanced Writing</p>
+              <button> Go </button>
+            </div>
+          </Link>
+        </div>        
+      </div>
     </table>
   );
 }

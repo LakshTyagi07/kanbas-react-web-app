@@ -7,7 +7,9 @@ import AssignmentEditor from "./Assignments/Editor";
 
 export default function Courses() {
     return (
+
       <div id="wd-courses">
+            <h1>Kanbas</h1>
         <h2>Course 1234</h2>
         <hr />
       <table>
