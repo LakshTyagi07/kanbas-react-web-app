@@ -1,9 +1,16 @@
 import { FaCheckCircle, FaGripVertical } from "react-icons/fa";
 import { IoEllipsisVertical } from "react-icons/io5";
 import { BiSearch } from "react-icons/bi"; // Import a search icon
+import { useParams } from "react-router-dom"; // Import useParams to get the course ID from the URL
+import assignmentsData from "../../Database/assignments.json"; // Assuming you have assignments data
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Assignments() {
+  const { cid } = useParams<{ cid: string }>(); // Get the course ID from the URL
+
+  // Filter assignments by the course ID (cid)
+  const courseAssignments = assignmentsData.filter(assignment => assignment.course === cid);
+
   return (
     <>
       {/* Search and Button Container */}
@@ -43,88 +50,33 @@ export default function Assignments() {
 
         {/* Assignment List */}
         <ul id="wd-assignment-list" className="list-unstyled">
-          {/* Assignment 1 */}
-          <li className="wd-assignment-list-item border p-3 mb-3">
-            <div className="d-flex justify-content-between align-items-center">
-              {/* Left Icons and Title */}
-              <div className="d-flex align-items-center">
-                <FaGripVertical className="me-3 fs-4 text-secondary" /> {/* Centered Drag Handle */}
-                <div>
-                  <a
-                    href="#/Kanbas/Courses/1234/Assignments/123"
-                    className="fw-bold fs-5 mb-1 text-decoration-none"
-                  >
-                    A1
-                  </a>
-                  <div className="text-muted">
-                    Multiple Modules | <strong>Not available until</strong> May 6 at 12:00am
+          {courseAssignments.map(assignment => (
+            <li key={assignment._id} className="wd-assignment-list-item border p-3 mb-3">
+              <div className="d-flex justify-content-between align-items-center">
+                {/* Left Icons and Title */}
+                <div className="d-flex align-items-center">
+                  <FaGripVertical className="me-3 fs-4 text-secondary" />
+                  <div>
+                    {/* Construct the correct URL dynamically using the course ID (cid) and assignment ID (aid) */}
+                    <a href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}/Editor`} className="fw-bold fs-5 mb-1 text-decoration-none">
+  {assignment.title}
+</a>
+                    <div className="text-muted">
+                      Multiple Modules | <strong>Available from:</strong> {new Date(assignment.availableFromDate).toLocaleDateString()}
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* Right Icons */}
-              <div className="d-flex align-items-center">
-                <FaCheckCircle className="text-success fs-4 me-3" /> {/* Centered Checkmark */}
-                <IoEllipsisVertical className="fs-4 text-secondary" /> {/* Menu Dots Icon */}
-              </div>
-            </div>
-            <div className="text-muted ps-5 mt-1">
-              <strong>Due</strong> May 13 at 11:59pm | 100 pts
-            </div>
-          </li>
-
-          {/* Assignment 2 */}
-          <li className="wd-assignment-list-item border p-3 mb-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center">
-                <FaGripVertical className="me-3 fs-4 text-secondary" />
-                <div>
-                  <a
-                    href="#/Kanbas/Courses/1234/Assignments/124"
-                    className="fw-bold fs-5 mb-1 text-decoration-none"
-                  >
-                    A2
-                  </a>
-                  <div className="text-muted">
-                    Multiple Modules | <strong>Not available until</strong> May 13 at 12:00am
-                  </div>
+                {/* Right Icons */}
+                <div className="d-flex align-items-center">
+                  <FaCheckCircle className="text-success fs-4 me-3" />
+                  <IoEllipsisVertical className="fs-4 text-secondary" />
                 </div>
               </div>
-              <div className="d-flex align-items-center">
-                <FaCheckCircle className="text-success fs-4 me-3" />
-                <IoEllipsisVertical className="fs-4 text-secondary" />
+              <div className="text-muted ps-5 mt-1">
+                <strong>Due:</strong> {new Date(assignment.dueDate).toLocaleDateString()} | {assignment.points} pts
               </div>
-            </div>
-            <div className="text-muted ps-5 mt-1">
-              <strong>Due</strong> May 20 at 11:59pm | 100 pts
-            </div>
-          </li>
-
-          {/* Assignment 3 */}
-          <li className="wd-assignment-list-item border p-3 mb-3">
-            <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center">
-                <FaGripVertical className="me-3 fs-4 text-secondary" />
-                <div>
-                  <a
-                    href="#/Kanbas/Courses/1234/Assignments/125"
-                    className="fw-bold fs-5 mb-1 text-decoration-none"
-                  >
-                    A3
-                  </a>
-                  <div className="text-muted">
-                    Multiple Modules | <strong>Not available until</strong> May 20 at 12:00am
-                  </div>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <FaCheckCircle className="text-success fs-4 me-3" />
-                <IoEllipsisVertical className="fs-4 text-secondary" />
-              </div>
-            </div>
-            <div className="text-muted ps-5 mt-1">
-              <strong>Due</strong> May 27 at 11:59pm | 100 pts
-            </div>
-          </li>
+            </li>
+          ))}
         </ul>
       </div>
     </>
