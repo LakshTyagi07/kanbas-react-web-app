@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
-import { useDispatch } from "react-redux";
-import { addAssignment } from "./reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { addAssignment, updateAssignment } from "./reducer";
 
-export default function AssignmentEditor() {
-  const { cid } = useParams();
+const AssignmentEditor = () => {
+  const { cid, aid } = useParams(); // Get course ID and assignment ID from URL
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Fetch assignments from the Redux store
+  const assignments = useSelector((state: any) => state.assignmentReducer?.assignments || []);
+  
+  // Find the assignment if the user is editing an existing one
+  const existingAssignment = assignments.find((a: any) => a._id === aid);
+
+  // State for the assignment form
   const [assignment, setAssignment] = useState({
     title: "",
     description: "",
@@ -17,16 +24,45 @@ export default function AssignmentEditor() {
     availableUntilDate: "",
   });
 
+  // Load existing assignment details if editing
+  useEffect(() => {
+    if (existingAssignment) {
+      setAssignment({
+        title: existingAssignment.title,
+        description: existingAssignment.description,
+        points: existingAssignment.points,
+        dueDate: existingAssignment.dueDate,
+        availableFromDate: existingAssignment.availableFromDate,
+        availableUntilDate: existingAssignment.availableUntilDate,
+      });
+    }
+  }, [existingAssignment]);
+
+  // Handle saving the assignment
   const handleSave = () => {
-    const newAssignment = {
+    if (!assignment.title.trim()) {
+      alert("Assignment title is required");
+      return;
+    }
+
+    const updatedAssignment = {
       ...assignment,
-      _id: new Date().getTime().toString(),
+      _id: existingAssignment ? existingAssignment._id : new Date().getTime().toString(),
       course: cid,
     };
-    dispatch(addAssignment(newAssignment));
+
+    if (existingAssignment) {
+      // Update existing assignment
+      dispatch(updateAssignment(updatedAssignment));
+    } else {
+      // Add new assignment
+      dispatch(addAssignment(updatedAssignment));
+    }
+
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
 
+  // Handle canceling the form
   const handleCancel = () => {
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
@@ -97,4 +133,6 @@ export default function AssignmentEditor() {
       </div>
     </div>
   );
-}
+};
+
+export default AssignmentEditor;
