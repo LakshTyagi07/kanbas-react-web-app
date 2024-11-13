@@ -1,95 +1,100 @@
-import { useParams, Link } from "react-router-dom";
-import assignments from "../../Database/assignments.json";
-export default function AssignmentEditor() {
-  const { cid, aid } = useParams(); // Make sure cid and aid are coming in correctly
-  const assignment = assignments.find(a => a._id === aid);
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useDispatch } from "react-redux";
+import { addAssignment } from "./reducer";
 
-  if (!assignment) {
-    return <div>Assignment not found</div>;
-  }
+export default function AssignmentEditor() {
+  const { cid } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [assignment, setAssignment] = useState({
+    title: "",
+    description: "",
+    points: 0,
+    dueDate: "",
+    availableFromDate: "",
+    availableUntilDate: "",
+  });
+
+  const handleSave = () => {
+    const newAssignment = {
+      ...assignment,
+      _id: new Date().getTime().toString(),
+      course: cid,
+    };
+    dispatch(addAssignment(newAssignment));
+    navigate(`/Kanbas/Courses/${cid}/Assignments`);
+  };
+
+  const handleCancel = () => {
+    navigate(`/Kanbas/Courses/${cid}/Assignments`);
+  };
 
   return (
     <div className="container" id="wd-assignments-editor">
       <h3>Assignment Name</h3>
-      <input className="form-control mb-2" id="wd-name" value={assignment.title} readOnly />
+      <input
+        className="form-control mb-2"
+        placeholder="Enter assignment name"
+        value={assignment.title}
+        onChange={(e) => setAssignment({ ...assignment, title: e.target.value })}
+      />
 
-      <textarea className="form-control mb-4" rows={5} id="wd-description" value={assignment.description || ''} readOnly />
-      
-      <div className="row mb-2">
-        <div className="col-3">
-          <label htmlFor="wd-points" className="float-end">Points</label>
-        </div>
-        <div className="col-9">
-          <input className="form-control" id="wd-points" value={assignment.points || 0} readOnly />
-        </div>
-      </div>
-      
-      <div className="row mb-2">
-        <div className="col-3">
-          <label htmlFor="wd-group" className="float-end">Assignment Group</label>
-        </div>
-        <div className="col-9">
-          <select className="form-select">
-            <option value="VAL1">ASSIGNMENTS</option>
-          </select>
-        </div>
-      </div>
-      
-      <div className="row mb-2">
-        <div className="col-3">
-          <label htmlFor="wd-submission-type" className="float-end">Submission Type</label>
-        </div>
-        <div className="col-9">
-          <select className="form-select">
-            <option value="VAL1">Online</option>
-          </select>
-        </div>
-      </div>
-      
-      <div className="row mb-2">
-        <div className="col-3">
-          <label className="float-end">Online Entry Options</label>
-        </div>
-        <div className="col-9">
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-website-url" checked />
-            <label className="form-check-label" htmlFor="wd-website-url">Website URL</label>
-          </div>
+      <textarea
+        className="form-control mb-4"
+        rows={5}
+        placeholder="Enter assignment description"
+        value={assignment.description}
+        onChange={(e) => setAssignment({ ...assignment, description: e.target.value })}
+      />
 
-        </div>
+      <input
+        className="form-control mb-2"
+        type="number"
+        placeholder="Points"
+        value={assignment.points}
+        onChange={(e) => setAssignment({ ...assignment, points: parseInt(e.target.value) })}
+      />
+
+      <div className="mb-3">
+        <label>Due Date</label>
+        <input
+          className="form-control"
+          type="datetime-local"
+          value={assignment.dueDate}
+          onChange={(e) => setAssignment({ ...assignment, dueDate: e.target.value })}
+        />
       </div>
-      
-      <div className="row mb-2">
-        <div className="col-3">
-          <label htmlFor="wd-assign-to" className="float-end">Assign</label>
-        </div>
-        <div className="col-9">
-          <div className="mb-1">Assign to</div>
-          <input className="form-control" id="wd-assign-to" value="Everyone" readOnly />
-          <div className="mt-2">Due</div>
-          <input type="datetime-local" className="form-control" id="wd-due-date" value={assignment.dueDate} readOnly />
-        </div>
+
+      <div className="mb-3">
+        <label>Available From</label>
+        <input
+          className="form-control"
+          type="datetime-local"
+          value={assignment.availableFromDate}
+          onChange={(e) => setAssignment({ ...assignment, availableFromDate: e.target.value })}
+        />
       </div>
-      
-      <div className="row mb-2">
-        <div className="col-3"></div>
-        <div className="col-9">
-          <div className="row">
-            <div className="col-6">
-              <div>Available from</div>
-              <input type="datetime-local" className="form-control" id="wd-available-from" value={assignment.availableFromDate} readOnly />
-            </div>
-            <div className="col-6">
-              <div>Until</div>
-              <input type="text" className="form-control" id="wd-available-until" readOnly />
-            </div>
-          </div>
-        </div>
+
+      <div className="mb-3">
+        <label>Available Until</label>
+        <input
+          className="form-control"
+          type="datetime-local"
+          value={assignment.availableUntilDate}
+          onChange={(e) => setAssignment({ ...assignment, availableUntilDate: e.target.value })}
+        />
       </div>
-      
-      <hr />
-      <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-secondary me-2">Cancel</Link>
-      <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-danger">Save</Link>
+
+      <div className="d-flex justify-content-end">
+        <button className="btn btn-secondary me-2" onClick={handleCancel}>
+          Cancel
+        </button>
+        <button className="btn btn-danger" onClick={handleSave}>
+          Save
+        </button>
+      </div>
     </div>
   );
 }
