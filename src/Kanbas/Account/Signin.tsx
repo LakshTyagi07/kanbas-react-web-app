@@ -1,21 +1,26 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-
+import * as client from "./client";
 import { setCurrentUser } from "./reducer";
-import * as db from "../Database";
 
 const Signin = () => {
-  const [credentials, setCredentials] = useState<any>({});
+  const [credentials, setCredentials] = useState<any>({
+    username: "",
+    password: "",
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const signin = () => {
-    const user = db.users.find(
-      (u: any) => u.username === credentials.username && u.password === credentials.password);
-    if (!user) return;
-    dispatch(setCurrentUser(user));
-    navigate("/Kanbas/Dashboard");
+  const signin = async () => {
+    try {
+      const user = await client.signin(credentials);
+      if (!user) return;
+      dispatch(setCurrentUser(user));
+      navigate("/Kanbas/Dashboard");
+    } catch (error) {
+      console.log(error);
+    }
   };
   
   return (
@@ -26,16 +31,22 @@ const Signin = () => {
         id="wd-username"
         placeholder="Username"
         className="form-control mb-2"
-        defaultValue={credentials.username}
-        onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+        value={credentials.username}  // Changed from defaultValue to value
+        onChange={(e) => setCredentials({ 
+          ...credentials, 
+          username: e.target.value 
+        })}
       />
       <input
         type="password"
         id="wd-password"
         placeholder="Password"
         className="form-control mb-2"
-        defaultValue={credentials.password}
-        onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+        value={credentials.password}  // Changed from defaultValue to value
+        onChange={(e) => setCredentials({ 
+          ...credentials, 
+          password: e.target.value 
+        })}
       />
       <button
         id="wd-signin-btn"

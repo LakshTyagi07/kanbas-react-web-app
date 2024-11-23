@@ -1,56 +1,76 @@
-import { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
-import CoursesNavigation from "./Navigation";
-import Modules from "./Modules";
 import Home from "./Home";
+import Modules from "./Modules";
 import Assignments from "./Assignments";
-import AssignmentEditor from "./Assignments/Editor";
 import PeopleTable from "./People/Table";
-import { courses } from "../Database";
+import CoursesNavigation from "./Navigation";
+import AssignmentEditor from "./Assignments/Editor";
 
-export default function Courses() {
-  const { cid } = useParams()
-  const { pathname } = useLocation()
-
-  const [breadcrumb, setBreadcrumb] = useState("");
-
+const Courses = ({ courses }: { courses: any[]; }) => {
+  const { cid } = useParams();
   const course = courses.find((course) => course._id === cid);
-
-  useEffect(() => {
-    const pathParts = pathname.split("/");
-    const section = pathParts[4] || "Home"; 
-
-    if (course) {
-      setBreadcrumb(`${course.name} > ${section}`);
-    } else {
-      setBreadcrumb(section);
-    }
-  }, [pathname, course]); 
+  const { pathname } = useLocation();
+  
   return (
-    <div id="wd-courses">
+    <div id="wd-courses" className="me-5">
       <h2 className="text-danger">
-        <FaAlignJustify className="me-3 fs-4 mb-1" />
-        {breadcrumb}
+        <FaAlignJustify className="me-4 fs-4 mb-1" />
+        {course && course.name} &gt; {pathname.split("/")[4]}
       </h2>
       <hr />
-
       <div className="d-flex">
-        {/* Sidebar Navigation */}
         <div className="d-none d-md-block">
           <CoursesNavigation />
         </div>
 
         <div className="flex-fill">
           <Routes>
-            <Route path="Home" element={<Home />} />
-            <Route path="Modules" element={<Modules />} />
-            <Route path="Assignments" element={<Assignments />} />
-            <Route path="Assignments/:aid" element={<AssignmentEditor />} />
-            <Route path="People" element={<PeopleTable />} />
+            <Route
+              path="/"
+              element={<Navigate to="Home" />}
+            />
+            <Route
+              path="Home"
+              element={<Home />}
+            />
+            <Route
+              path="Modules"
+              element={<Modules />}
+            />
+            <Route
+              path="Zoom"
+              element={<h2>Zoom</h2>}
+            />
+            <Route
+              path="Piazza"
+              element={<h2>Piazza</h2>}
+            />
+            <Route
+              path="Assignments"
+              element={<Assignments />}
+            />
+            <Route
+              path="Assignments/:aid"
+              element={<AssignmentEditor />}
+            />
+            <Route
+              path="Quizzes"
+              element={<h2>Quizzes</h2>}
+            />
+            <Route
+              path="Grades"
+              element={<h2>Grades</h2>}
+            />
+            <Route
+              path="People"
+              element={<PeopleTable />}
+            />
           </Routes>
         </div>
       </div>
     </div>
   );
 }
+
+export default Courses;
