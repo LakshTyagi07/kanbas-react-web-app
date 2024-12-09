@@ -1,18 +1,13 @@
 import { FaUserCircle } from "react-icons/fa";
-import { useParams } from "react-router-dom";
-import * as db from "../../Database"; // Import users and enrollments
-
-export default function PeopleTable() {
-  const { cid } = useParams(); // Get the current course ID from the URL
-  const { users, enrollments } = db;
-
-  // Filter the users based on their enrollment in the current course
-  const enrolledUsers = users.filter((user) =>
-    enrollments.some((enrollment) => enrollment.user === user._id && enrollment.course === cid)
-  );
+import { Link, useNavigate } from "react-router-dom";
+import PeopleDetails from "./Details";
+// deploy 
+export default function PeopleTable({ users = [] }: { users?: any[] }) {
+  const navigate = useNavigate();
 
   return (
     <div id="wd-people-table">
+      <PeopleDetails />
       <table className="table table-striped">
         <thead>
           <tr>
@@ -25,26 +20,22 @@ export default function PeopleTable() {
           </tr>
         </thead>
         <tbody>
-          {enrolledUsers.length > 0 ? (
-            enrolledUsers.map((user) => (
-              <tr key={user._id}>
-                <td className="wd-full-name text-nowrap">
+          {users.map((user: any) => (
+            <tr key={user._id}>
+              <td className="wd-full-name text-nowrap">
+                <Link to={`/Kanbas/Account/Users/${user._id}`} className="text-decoration-none">
                   <FaUserCircle className="me-2 fs-1 text-secondary" />
                   <span className="wd-first-name">{user.firstName}</span>{" "}
                   <span className="wd-last-name">{user.lastName}</span>
-                </td>
-                <td className="wd-login-id">{user.loginId}</td>
-                <td className="wd-section">{user.section}</td>
-                <td className="wd-role">{user.role}</td>
-                <td className="wd-last-activity">{user.lastActivity}</td>
-                <td className="wd-total-activity">{user.totalActivity}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={6}>No users found for this course.</td>
+                </Link>
+              </td>
+              <td className="wd-login-id">{user.loginId}</td>
+              <td className="wd-section">{user.section}</td>
+              <td className="wd-role">{user.role.toUpperCase()}</td>
+              <td className="wd-last-activity">{user.lastActivity}</td>
+              <td className="wd-total-activity">{user.totalActivity}</td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
     </div>

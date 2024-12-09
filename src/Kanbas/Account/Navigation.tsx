@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useSelector } from "react-redux";
@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 export default function AccountNavigation() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
+  const active = (path: string) => (pathname.includes(path) ? "active" : "");
+  const { pathname } = useLocation();
   return (
     <div id="wd-account-navigation" className="list-group wd fs-5 rounded-0">
       <Link
@@ -29,6 +31,15 @@ export default function AccountNavigation() {
       >
         Profile
       </Link>
+      {currentUser && currentUser.role === "ADMIN" && (
+        <Link
+          id="wd-account-users-link"
+          className={`list-group-item ${active('Users')} border border-0`}
+          to="/Kanbas/Account/Users"
+        >
+          Users
+        </Link>
+      )}
     </div>
   );
 }

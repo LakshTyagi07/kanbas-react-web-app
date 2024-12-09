@@ -1,68 +1,34 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import * as client from "./client";
-import { setCurrentUser } from "./reducer";
 
-const Signin = () => {
-  const [credentials, setCredentials] = useState<any>({
-    username: "",
-    password: "",
-  });
+import * as client from "./client";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { setCurrentUser } from "./reducer";
+import { useDispatch } from "react-redux";
+import * as db from "../Database";
+
+export default function Signin() {
+  const [credentials, setCredentials] = useState<any>({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const signin = async () => {
-    try {
-      const user = await client.signin(credentials);
-      if (!user) return;
-      dispatch(setCurrentUser(user));
-      navigate("/Kanbas/Dashboard");
-    } catch (error) {
-      console.log(error);
-    }
+    const user =  await client.signin(credentials);
+    if (!user) return;
+    dispatch(setCurrentUser(user));
+    navigate("/Kanbas/Dashboard");
   };
-  
-  return (
-    <div id="wd-signin-screen" style={{ width: "400px" }}>
-      <h1>Sign In</h1>
-      <input
-        type="text"
-        id="wd-username"
-        placeholder="Username"
-        className="form-control mb-2"
-        value={credentials.username}  // Changed from defaultValue to value
-        onChange={(e) => setCredentials({ 
-          ...credentials, 
-          username: e.target.value 
-        })}
-      />
-      <input
-        type="password"
-        id="wd-password"
-        placeholder="Password"
-        className="form-control mb-2"
-        value={credentials.password}  // Changed from defaultValue to value
-        onChange={(e) => setCredentials({ 
-          ...credentials, 
-          password: e.target.value 
-        })}
-      />
-      <button
-        id="wd-signin-btn"
-        className="btn btn-primary w-100 mb-2"
-        onClick={signin}
-      >
-        Sign in
-      </button>
-      <Link
-        id="wd-signup-link"
-        to="/Kanbas/Account/Signup"
-      >
-        Sign up
-      </Link>
-    </div>
-  );
-};
 
-export default Signin;
+  return (
+    <div id="wd-signin-screen">
+      <h1>Signin</h1>
+      <input defaultValue={credentials.username}
+      onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+      className="form-control mb-2" placeholder="username" id="wd-username" />
+
+      <input defaultValue={credentials.password}
+      onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+      className="form-control mb-2" placeholder="password" type="password" id="wd-password" />
+
+      <button onClick={signin} id="wd-signin-btn" className="btn btn-primary w-100" > Sign in </button>
+      <Link id="wd-signup-link" to="/Kanbas/Account/Signup"> Sign up </Link>
+    </div>
+);}

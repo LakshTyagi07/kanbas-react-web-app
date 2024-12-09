@@ -1,33 +1,52 @@
 import axios from "axios";
-const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
-const COURSES_API = `${REMOTE_SERVER}/api/courses`;
-export const fetchAllCourses = async () => {
-  const { data } = await axios.get(COURSES_API);
+
+export const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
+export const USERS_API = `${REMOTE_SERVER}/api/users`;
+
+const axiosWithCredentials = axios.create({ withCredentials: true });
+
+export const createCourse = async (course: any) => {
+  const { data } = await axiosWithCredentials.post(
+    `${USERS_API}/current/courses`, 
+    course
+  );
   return data;
 };
 
-export const deleteCourse = async (id: string) => {
-  const response = await axios.delete(`${COURSES_API}/${id}`);
-  return response.data;
+export const fetchAllCourses = async () => {
+  const { data } = await axiosWithCredentials.get(
+    `${USERS_API}/current/courses`
+  );
+  return data;
 };
 
 export const updateCourse = async (course: any) => {
-  const response = await axios.put(
-    `${COURSES_API}/${course._id}`, 
+  const { data } = await axiosWithCredentials.put(
+    `${USERS_API}/current/courses/${course._id}`, 
     course
   );
-  return response.data;
-};
-export function updateAssignment(assignmentId: string | undefined, assignment: any) {
-  throw new Error("Function not implemented.");
-}
-
-export function findAssignmentsForCourse(courseId: string | undefined) {
-  throw new Error("Function not implemented.");
-}
-
-export const publishCourse = async (courseId: string) => {
-  const response = await axios.put(`${COURSES_API}/${courseId}/publish`);
-  return response.data;
+  return data;
 };
 
+export const deleteCourse = async (courseId: string) => {
+  const { data } = await axiosWithCredentials.delete(
+    `${USERS_API}/current/courses/${courseId}`
+  );
+  return data;
+};
+
+// Module-related functions
+export const createModuleForCourse = async (courseId: string, module: any) => {
+  const { data } = await axiosWithCredentials.post(
+    `${USERS_API}/current/courses/${courseId}/modules`,
+    module
+  );
+  return data;
+};
+
+export const findModulesForCourse = async (courseId: string) => {
+  const { data } = await axiosWithCredentials.get(
+    `${USERS_API}/current/courses/${courseId}/modules`
+  );
+  return data;
+};
